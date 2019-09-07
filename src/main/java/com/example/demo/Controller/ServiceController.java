@@ -49,7 +49,7 @@ public class ServiceController {
     public void discoverRoot(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         String rootUri = request.getRequestURL().toString();
         URI predictUri = new UriTemplate("{rootUri}{resource}").expand(rootUri, "predict");
-        URI indexUri = new UriTemplate("{rootUri}{resource}").expand(rootUri, "index");
+        URI indexUri = new UriTemplate("{rootUri}{resource}").expand(rootUri, "index.html");
         String linkToIndex = LinkUtil.createLinkHeader(indexUri.toASCIIString(), "index");
         response.addHeader("Link", linkToIndex);
         String linkToPredict = LinkUtil.createLinkHeader(predictUri.toASCIIString(), "restconf");
@@ -96,8 +96,7 @@ public class ServiceController {
         Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
         for(InputField inputField: inputFields){
             FieldName inputName = inputField.getName();
-            String rawValue = input;
-            FieldValue inputValue = inputField.prepare(rawValue);
+            FieldValue inputValue = inputField.prepare(input);
             arguments.put(inputName, inputValue);
         }
 
