@@ -25,7 +25,6 @@ function QueryViewModel() {
     self.addQuery = function () {
         // a little bit of pre-processing of user entered rawText 
         var newRawText = self.newRawText();
-        console.log(newRawText)
         if (typeof newRawText == "undefined") {
             alert("RawText required");
             return;
@@ -40,14 +39,13 @@ function QueryViewModel() {
 
 
         // make POST request
-        $.ajax("http://localhost:8080/predict", {
+        $.ajax("/predict", {
             data: '{"words": "' + newRawText +  '"}',
             type: "post",
             contentType: "application/json",
             success: function (data) {
-                var query = new Query(self.querys.length, newRawText, new Date(), data.confidence, data.result)
-                self.querys.push(query)
-                //self.loadQuerys();
+                var query = new Query(self.querys.length, newRawText, new Date(), data.confidence, data.result);
+                self.querys.push(query);
                 self.newRawText("");
             }
         });
@@ -73,13 +71,13 @@ function QueryViewModel() {
 
 
         // make PUT request (or send PATCH then we don't need to include the created date)
-        $.ajax("http://localhost:8080/predict", {
+        $.ajax("/predict", {
             data: '{"words": "' + newRawText +'"}',
             type: "post",
             contentType: "application/json",
             success: function (data) {
                 self.deleteQuery(thisquery);
-                var query = new Query(self.querys.length, newRawText, new Date(), data.confidence, data.result)
+                var query = new Query(self.querys.length, newRawText, new Date(), data.confidence, data.result);
                 self.querys.push(query)
             }
         });
