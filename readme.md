@@ -166,13 +166,11 @@ $ docker build . --tag your-accountid.dkr.ecr.your-region.amazonaws.com/your-ecr
 ```
 
 4. Test the image
-
-   4.1. Start the container(A POSTMAN collection of API tests configuraton files can be found in API Tests folder )
+    4.1. Start the container(A POSTMAN collection of API tests configuraton files can be found in API Tests folder )
 
 ```
 docker run -p 8080:8080 your-accountid.dkr.ecr.your-region.amazonaws.com/your-ecr-repository-name
 ```
-
    4.2. Test with GET Request to discover APIs on this port.
 
 ```
