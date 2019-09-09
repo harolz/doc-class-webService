@@ -106,6 +106,7 @@ plt.ylabel('True Labels')
 plt.xlabel('Predicted Labels')
 plt.show()
 ```
+![](https://harolz.com/assets/img/confusion_matrix.png)
 
 Combining the above objects into a `sklearn2pmml.pipeline.PMMLPipeline` object, and running the experiment:
 
