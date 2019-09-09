@@ -23,6 +23,7 @@ tfidf = TfidfVectorizer(sublinear_tf=True, max_df = 0.75, min_df = 0.01, norm=No
 features = tfidf.fit_transform(df['Content'].astype('U').values).toarray()
 labels = df['Category']
 all_categories = np.unique(labels)
+print(type(all_categories))
 print(features.shape)
 
 N = 2
@@ -90,8 +91,8 @@ new_conf_matrix = np.array(new_conf_matrix)
 
 fig, ax = plt.subplots(figsize=(10,10))
 category_ids = df.groupby(['Category']).count().index
-sns.heatmap(new_conf_matrix.T, square=True, annot=True,fmt='d',cbar =False,
-            xticklabels=category_ids, yticklabels=category_ids)
+sns.heatmap(new_conf_matrix.T, square=True, annot=True,cbar =False,
+            xticklabels=all_categories, yticklabels=all_categories)
 plt.ylabel('True Labels')
 plt.xlabel('Predicted Labels')
 plt.show()
@@ -120,18 +121,18 @@ pipeline = Pipeline([('vect', tfidfv),
 
 pipeline.fit(features_train, labels_train)
 from sklearn.externals import joblib
-joblib.dump(pipeline, 'model.pkl')
+joblib.dump(pipeline, 'model-latest.pkl')
 
 
-pipeline = PMMLPipeline([('vect', tfidfv),
-                         ('selector', selector),
-                         ('lr', lr),
-                         ])
-
-sklearn2pmml(pipeline, 'doc_classify.pmml', with_repr=True)
-
-model = PyPmmlModel.fromFile('doc_classify.pmml')
-result = model.predict([df.iloc[13605]['Content']])
+# pipeline = PMMLPipeline([('vect', tfidfv),
+#                          ('selector', selector),
+#                          ('lr', lr),
+#                          ])
+#
+# sklearn2pmml(pipeline, 'doc_classify.pmml', with_repr=True)
+#
+# model = PyPmmlModel.fromFile('doc_classify.pmml')
+# result = model.predict([df.iloc[13605]['Content']])
 
 
 
