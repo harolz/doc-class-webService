@@ -30,7 +30,7 @@ public class ServiceController {
     @PostConstruct
     public void init() {
         try {
-            InputStream file = ServiceController.class.getClassLoader().getResourceAsStream("doc_class.pmml");
+            InputStream file = ServiceController.class.getClassLoader().getResourceAsStream("pipeline.pmml");
             evaluator = new LoadingModelEvaluatorBuilder()
                     .load(file)
                     .build();
