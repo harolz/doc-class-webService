@@ -172,7 +172,7 @@ A POSTMAN collection of API tests configuraton files can be found in API Tests f
 
 
 ```
-docker run -p 8080:8080 your-accountid.dkr.ecr.your-region.amazonaws.com/your-ecr-repository-name
+$ docker run -p 8080:8080 your-accountid.dkr.ecr.your-region.amazonaws.com/your-ecr-repository-name
 ```
 5. Test access to Root with GET Request to discover APIs on this port: 
 
@@ -197,7 +197,7 @@ Web Service returns JSON response of the predicted document class with highest l
 ```
 {"result":"BINDER","confidence":0.9960767386333178}
 ```
-7. Test with GET Request in format of http://localhost:8080/predict/{words}
+7. Test RESTful APIs with GET Request in format of http://localhost:8080/predict/{words}
    
 
 ```
