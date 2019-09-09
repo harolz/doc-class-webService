@@ -78,7 +78,7 @@ sns.stripplot(x='model_name', y='accuracy', data=cv_df,
               size=8, jitter=True, edgecolor="gray", linewidth=2)
 plt.show()
 ```
-![](/home/user/Pictures/classifier_accuracies.png)
+![](https://harolz.com/assets/img/classifier_accuracies.png)
 
 Decide on using logistic regression model based pipeline configuration since it provides highest true positives.
 
