@@ -1,4 +1,4 @@
-# [Doc Classification Web Service Container
+# Doc Classification Web Service Container
 
  A container that hosts static web page and RESTful APIs(GET/POST), which implement features of real-time, batch prediction and inference pipeline use-cases for OCR scanned paper-based document. 
 
