@@ -55,50 +55,53 @@ all_categories = np.unique(labels)
 print(features.shape)
 ```
 
-For each category, create
-
+Performing a 5-fold cross validation Over a few popular classifiers to choose the classifier that best classify the vectorized features.
 ```python
-from sklearn_pandas import DataFrameMapper
+# Topical model includes SVM, Logistic Regression and Naive Bayes
+models = [LinearSVC(),LogisticRegression(),MultinomialNB()]
+
+# 5 fold cross validation
+CV = 5
+
+entries = []
+for model in models:
+    model_name = model.__class__.__name__
+    accuracies = cross_val_score(model, features, labels, scoring='accuracy', cv=CV)
     for fold_idx, accuracy in enumerate(accuracies):
+        entries.append((model_name, fold_idx, accuracy))
 
+cv_df = pd.DataFrame(entries, columns=['model_name', 'fold_idx', 'accuracy'])
+
+sns.boxplot(x='model_name', y='accuracy', data=cv_df)
+sns.stripplot(x='model_name', y='accuracy', data=cv_df,
+              size=8, jitter=True, edgecolor="gray", linewidth=2)
+plt.show()
 ```
-
-
-
-First, creating a `sklearn_pandas.DataFrameMapper` object, which performs **column-oriented** feature engineering and selection work:
+Decide on using logistic regression model based pipeline configuration since it provides highest true positives.
 
 ```python
-from sklearn_pandas import DataFrameMapper
-from sklearn.preprocessing import StandardScaler
-from sklearn2pmml.decoration import ContinuousDomain
+### TfidfVectorizer
+tfidfv = TfidfVectorizer(ngram_range=(1, 2), min_df=0.01, max_df=0.75, norm=None, tokenizer=Splitter())
 
-column_preprocessor = DataFrameMapper([
-    (["Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width"], [ContinuousDomain(), StandardScaler()])
-])
+## Selector.
+selector = SelectKBest(chi2, k=1000)
+
+lr = LogisticRegression(penalty='l2', dual=False,
+                        tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1,
+                        class_weight='balanced', random_state=None, solver='newton-cg',  max_iter=100, multi_class='multinomial', verbose=0,
+                        warm_start=False, n_jobs=-1, l1_ratio=None)
 ```
-
-Second, creating `Transformer` and `Selector` objects, which perform **table-oriented** feature engineering and selection work:
-
+Evaluating logistic regression model using confusion_matrix
 ```python
-from sklearn.decomposition import PCA
-from sklearn.feature_selection import SelectKBest
-from sklearn.pipeline import Pipeline
-from sklearn2pmml import SelectorProxy
+new_conf_matrix = np.array(new_conf_matrix)
 
-table_preprocessor = Pipeline([
-	("pca", PCA(n_components = 3)),
-	("selector", SelectorProxy(SelectKBest(k = 2)))
-])
-```
-
-Please note that stateless Scikit-Learn selector objects need to be wrapped into an `sklearn2pmml.SelectprProxy` object.
-
-Third, creating an `Estimator` object:
-
-```python
-from sklearn.tree import DecisionTreeClassifier
-
-classifier = DecisionTreeClassifier(min_samples_leaf = 5)
+fig, ax = plt.subplots(figsize=(10,10))
+category_ids = df.groupby(['Category']).count().index
+sns.heatmap(new_conf_matrix.T, square=True, annot=True,fmt='d',cbar =False,
+            xticklabels=category_ids, yticklabels=category_ids)
+plt.ylabel('True Labels')
+plt.xlabel('Predicted Labels')
+plt.show()
 ```
 
 Combining the above objects into a `sklearn2pmml.pipeline.PMMLPipeline` object, and running the experiment:
