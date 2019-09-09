@@ -192,7 +192,7 @@ $ curl -X POST http://localhost:8080/predict -d '{"words":"aa1ef5f5355f 59480012
    	Web Service returns JSON response of the predicted document class with highest likelihood and a confidence value.
 
 ```
-{"result":"BINDER","confidence":0.6880633254455778}
+{"result":"BINDER","confidence":0.9960767386333178}
 ```
 4.4. Test with GET Request in format of http://localhost:8080/predict/{words}
    
@@ -203,7 +203,7 @@ $ curl -G http://localhost:8080/predict/aa1ef5f5355f%205948001254b3%20ddcfb32772
    A JSON response of same format will be returned.
 
 ```
-{"result":"BINDER","confidence":0.6880633254455778}
+{"result":"BINDER","confidence":0.9960767386333178}
 ```
 
 # Push to ECR
