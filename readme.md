@@ -27,6 +27,7 @@ Loading data to a `pandas.DataFrame` object and visualize the input data distrib
 
 ```python
 import pandas
+import matplotlib.pyplot as plt
 df = pandas.read_csv("shuffled-full-set-hashed.csv")
 df.columns = ['Category', 'Content']
 #  Print the first 20 data points -- the head of the dataset
