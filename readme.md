@@ -104,35 +104,28 @@ classifier = DecisionTreeClassifier(min_samples_leaf = 5)
 Combining the above objects into a `sklearn2pmml.pipeline.PMMLPipeline` object, and running the experiment:
 
 ```python
-from sklearn2pmml.pipeline import PMMLPipeline
-
-pipeline = PMMLPipeline([
-    ("columns", column_preprocessor),
-    ("table", table_preprocessor),
-    ("classifier", classifier)
-])
-pipeline.fit(iris_X, iris_y)
+pipeline = PMMLPipeline([('vect', tfidfv),
+                      ('selector', selector),
+                      ('lr', lr),
+                      ])
 ```
 
 Embedding model verification data:
 
 ```python
-pipeline.verify(iris_X.sample(n = 15))
+sklearn2pmml(pipeline, 'doc_classify.pmml', with_repr=True)
 ```
 
 Storing the fitted `PMMLPipeline` object in `pickle` data format:
 
 ```python
 from sklearn.externals import joblib
-
-joblib.dump(pipeline, "pipeline.pkl", compress = 9)
+joblib.dump(pipeline, 'model.pkl')
 ```
 
-Please see the test script file [main.py](https://github.com/jpmml/jpmml-sklearn/blob/master/src/test/resources/main.py) for more classification (binary and multi-class) and regression workflows.
+###  Use JPMML-SkLearn excuatbles to convert model formats for cross platform use
 
-### The JPMML-SkLearn side of operations
-
-Converting the pipeline pickle file `pipeline.pkl.z` to a PMML file `pipeline.pmml`:
+Converting the pipeline pickle file `model.pkl` to a PMML file `doc_classify.pmml`:
 
 ```
 $ java -jar target/jpmml-sklearn-executable-1.5-SNAPSHOT.jar --pkl-input model.pkl --pmml-output pipeline.pmml
@@ -166,30 +159,32 @@ $ docker build . --tag your-accountid.dkr.ecr.your-region.amazonaws.com/your-ecr
 
 4. Test the image
 
-   4.1. Start the container 
+   4.1. Start the container(A POSTMAN collection of API tests configuraton files can be found in API Tests folder )
 
 ```
 docker run -p 8080:8080 your-accountid.dkr.ecr.your-region.amazonaws.com/your-ecr-repository-name
 ```
-​  4.2. Test with GET Request to discover APIs on this port.
+
+   4.2. Test with GET Request to discover APIs on this port.
 
 ```
 $ curl -i -G http://localhost:8080
 ```
-   In header field returned by server, info on available service on this port are included.
+   In header field returned by server, info on available services on this port are included.
 ```
 HTTP/1.1 204 
 Link: <http://localhost:8080/index.html>; rel="index"
 Link: <http://localhost:8080/predict>; rel="restconf"
 Date: Mon, 09 Sep 2019 05:18:03 GMT
 ```
-​  4.3. Test API with POST Requests, which can carry multiple kinds of Content-Type headers but must be in Key/Value pairs with the key to be "words"
+
+   4.3. Test API with POST Requests, which can carry multiple kinds of Content-Type headers but must be in Key/Value pairs with the key to be "words"
 
 ```
 $ curl -X POST http://localhost:8080/predict -d '{"words":"aa1ef5f5355f 5948001254b3 ddcfb3277250 f95d0bea231b 9e0c01b8b857 e259a56993f4 9a87e8f4bd5c aa1ef5f5355f f95d0bea231b 35a437bf20ea 39995776c91f 6a95ce91efbd 174679aec918 3a918f3d2d81 43af6db29054 dc83f2b00468 43af6db29054 1df053306286 aa3c127bfd67 8f75273e5510 036087ac04f9 aa1ef5f5355f b136f6349cf3 d38820625542 d0b9e33388a7 f9f90c2328ed ebe6b1fb3a5b 2356cc591755 e2d8c082f942 8b6c5bb157a9 b590e4634f73 df3e4be4e03a 6eb1a319229d 036087ac04f9 b136f6349cf3 a1e5904d04f5 9cdf4a63deb0 f49ab97a086c c5dcd74b40a9 7e8d554779a7 56fa56419ad0 46a0c35e916c d9ef68daef4c a3360a4991fa 133d46f7ed38 0f12fd1c2b99 31fd3123f41c 33630ee5f812 586242498a88 d38820625542 bb0e7ae8fdbf d38820625542 d38820625542 6bf9c0cb01b4 1a0b71f9f7ff a0c020166d79 8d87346febd0 5d114661f44f 63b82ee0a4d8 174679aec918 3a918f3d2d81 c913f5129fe2 dc83f2b00468 377a21b394dc 1df053306286 454513214d62 8137cf3679d9 192707ed58ee 4c1f76b16699 7bfba3bd67d7 10520efc20b5 7e07ecc160fd 769e648b85f2 aecab1ec7a6d aa3c127bfd67 8e1e192ac432 6101ed18e42f 036087ac04f9 0f1b8403e5ee b136f6349cf3 036087ac04f9 7ec02e30a5b3 b136f6349cf3 b28b5d7829ea bfed1d086a6c 6ce6cc5a3203 798fe9915030 71c48df544b0 04e4d0d2f1c7 9cdf4a63deb0 f9f90c2328ed a3b334c6eefd ebe6b1fb3a5b 8e93a2273a93 9bc65adc033c 9ad186d42f69 4ffb12504ac6 6b343f522f78 0662d94b3d3b fe64d3cdfe5b 2519927ae3fa 74586e35c44a 6365c4563bd1 4ffb12504ac6 2ea49cf89745 e504ee0aaf6d 6ce6cc5a3203 af671fbeb212 957b5cf4e65e 99716e581500 056314258a60 056314258a60 997c023f641e 6b1c8f75a7e2 4e5019f629a9 cafaf222091d cafaf222091d f7ae6f8257da 04503bc22789 ebbd827fe2a0 6ca2dd348663 2fb652bf7937 7d9e333a86da 7ec02e30a5b3 9cdf4a63deb0 b28b5d7829ea 0c37b8e00f96 bfed1d086a6c 1160c83555d2 04503bc22789 bd50a6b2259f cfd22ba194a9 ed5d3a65ee2d f2f35d4c0c22 55c0cd1cc044 30ca33997a38 84bf8a94981c 8eedff84f18d b208ae1e8232 4eb7c8207490 454513214d62 8137cf3679d9 6365c4563bd1 4c1f76b16699 9a87e8f4bd5c 9f11111004ec 56a0a522a4dd c337a85b8ef9 9b88c973ae02 422068f04236 6bf9c0cb01b4 e94953618947 1b6d0614f2c7 afb1e3806fc1 f2f35d4c0c22 036087ac04f9 6bf9c0cb01b4 e94953618947 c337a85b8ef9 b136f6349cf3 cafaf222091d a1fde4983c10 2ed97f462806 c8f5ad40a683 8f75273e5510 9e0c01b8b857 7d9e333a86da f4b04aeadc5e 9a87e8f4bd5c 2556150a673a b9699ce57810 133d46f7ed38 04503bc22789 b9699ce57810 e7e059c82399 ce1f034abb5d 6f40fa36485c 7e07ecc160fd 6ef2ade170d9 769e648b85f2 d9ef68daef4c 6ce6cc5a3203 b513aeae3f9a 30ca33997a38 769e648b85f2 ec3406979928 9fbc5a0e2daf bf3aa3fc66f6 e4dad7cb07b6 fc25f79e6d18 e1b9e4df3a88 2556150a673a 878460b4304e 7e07ecc160fd 586242498a88 769e648b85f2 586242498a88 e4dad7cb07b6 9431856ec97e 6bf9c0cb01b4 e94953618947 c337a85b8ef9 094453b4e4ae c33b5c3d0449 b9699ce57810 489eaf3a08fb 95ef80a0b841 f0666bdbc8a5 d9ef68daef4c 56c2c356d772 e7e2fc1908c0 b2c1fd62c2ac eb52c980ed38 e162da38a9d7 cb7631b88e51 8ebb4fffd292 a3360a4991fa f4b04aeadc5e 422068f04236 d38820625542 133d46f7ed38 1015893e384a 97b6014f9e50 470aa9b28443 29455ef44c25 6b343f522f78 29e88482be15 2d00e7e4d33f 5c02c2aaa67b 6b343f522f78 b008843106fd d38820625542 636540642f5d 133d46f7ed38 1a0b71f9f7ff 890ad17d1696 0cbca93be301 b208ae1e8232 b008843106fd ba3a3713691e bf15989af17d 4f5e0215c1bf d63be9e66da8 5c2db045bc17 d38820625542 7d9e333a86da d8535c18626a 0cbca93be301 d38820625542 9e0c01b8b857"}' -H "Content-Type: application/json"
 ```
 
-   Web Service returns JSON response of the predicted document class with most likelihood and a confidence value.
+   Web Service returns JSON response of the predicted document class with highest likelihood and a confidence value.
 
 ```
 {"result":"BINDER","confidence":0.6880633254455778}
